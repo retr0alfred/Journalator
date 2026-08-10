@@ -18,3 +18,6 @@ release.jks
 
 # Exports the app produces, in case anyone runs one into the project directory.
 *.jrnlx
+
+# Locally-built APKs handed over for testing. Never committed.
+/dist/
