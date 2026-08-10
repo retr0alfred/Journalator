@@ -1,0 +1,15 @@
+# Normalise line endings. This is not cosmetic: `gradlew` is executed by bash on the CI
+# runners, and a CRLF shebang makes it fail with "bad interpreter" on Linux.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Never touch binaries.
+*.jar    binary
+*.png    binary
+*.ttf    binary
+*.otf    binary
+*.apk    binary
+*.jrnlx  binary

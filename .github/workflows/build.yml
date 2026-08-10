@@ -1,0 +1,239 @@
+name: build
+
+# The user of this project cannot run an emulator locally, so CI is the test environment.
+# Nothing is published unless lint, the JVM tests and the instrumented tests on API 24 and
+# API 34 have all passed first.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx3g -Dorg.gradle.daemon=false
+
+jobs:
+  lint:
+    name: Android Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Lint (fails on any error)
+        run: ./gradlew :app:lintRelease --stacktrace
+
+      # The offline guarantee is a build-time invariant, not a code review convention.
+      - name: Verify the app requests no forbidden permissions
+        run: ./gradlew :app:verifyNoInternetPermission --stacktrace
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-*.*
+          if-no-files-found: ignore
+
+  unit-test:
+    name: Unit tests (JVM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: app/build/reports/tests/testDebugUnitTest
+          if-no-files-found: ignore
+
+  instrumented-test:
+    name: Instrumented tests (API ${{ matrix.api-level }})
+    needs: [lint, unit-test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        # The floor the app supports and a modern release. Between them they cover the two
+        # things most likely to differ: the JCA provider set and the scoped-storage rules.
+        api-level: [24, 34]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # KVM is what makes the emulator usable on a hosted runner rather than glacial.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: Create AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: default
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "AVD snapshot created."
+
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: default
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
+
+      - name: Upload instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-results-api${{ matrix.api-level }}
+          path: app/build/reports/androidTests/connected
+          if-no-files-found: ignore
+
+  build:
+    name: Release APK
+    needs: [instrumented-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # When the secrets are absent the build still succeeds and produces an unsigned APK.
+      # A fresh clone must always build.
+      - name: Assemble release
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease --stacktrace
+
+      - name: Name the artifact and checksum it
+        id: artifact
+        run: |
+          set -euo pipefail
+          version="$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)"
+          src="$(find app/build/outputs/apk/release -name '*.apk' | head -n 1)"
+          out="journalator-${version}.apk"
+          cp "$src" "$out"
+          sha256sum "$out" > "${out}.sha256"
+          echo "path=${out}" >> "$GITHUB_OUTPUT"
+          echo "checksum=${out}.sha256" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          ls -la "$out"
+          cat "${out}.sha256"
+
+      # A release that quietly grew past 10 MB is a regression, so fail rather than publish.
+      - name: Enforce the APK size budget
+        run: |
+          set -euo pipefail
+          bytes=$(stat -c%s "${{ steps.artifact.outputs.path }}")
+          limit=$((10 * 1024 * 1024))
+          echo "APK is ${bytes} bytes; budget is ${limit}."
+          test "$bytes" -le "$limit"
+
+      - name: Confirm the shipped APK requests no network permission
+        run: |
+          set -euo pipefail
+          aapt="$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)"
+          "$aapt" dump permissions "${{ steps.artifact.outputs.path }}" | tee permissions.txt
+          if grep -q 'android.permission.INTERNET' permissions.txt; then
+            echo "::error::The release APK requests INTERNET."
+            exit 1
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: journalator-apk
+          path: |
+            ${{ steps.artifact.outputs.path }}
+            ${{ steps.artifact.outputs.checksum }}
+
+      - name: Publish a GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Journalator ${{ steps.artifact.outputs.version }}
+          files: |
+            ${{ steps.artifact.outputs.path }}
+            ${{ steps.artifact.outputs.checksum }}
+          body: |
+            Offline, passcode-locked daily journal.
+
+            Verify the download before installing:
+
+            ```
+            sha256sum -c journalator-${{ steps.artifact.outputs.version }}.apk.sha256
+            ```
+
+            The security model is described in `docs/SECURITY.md`. This APK requests no
+            internet permission.

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#0B0B0D"
+        android:pathData="M0,0 H108 V108 H0 Z" />
+    <!-- A single torn tape strip so the icon reads as pasted paper, not a chrome badge. -->
+    <path
+        android:fillAlpha="0.10"
+        android:fillColor="#EDE9DF"
+        android:pathData="M0,72 L108,58 L108,74 L0,88 Z" />
+</vector>

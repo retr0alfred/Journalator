@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Empty on purpose. Combined with android:allowBackup="false" this means no
+    Google auto-backup, no `adb backup`, and no device-to-device transfer copy.
+-->
+<full-backup-content>
+    <exclude
+        domain="root"
+        path="." />
+    <exclude
+        domain="file"
+        path="." />
+    <exclude
+        domain="database"
+        path="." />
+    <exclude
+        domain="sharedpref"
+        path="." />
+    <exclude
+        domain="external"
+        path="." />
+</full-backup-content>

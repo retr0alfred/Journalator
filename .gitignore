@@ -1,0 +1,20 @@
+*.iml
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Signing material must never enter the repository. CI injects the keystore from
+# repository secrets and writes it into build/ at configuration time.
+*.jks
+*.keystore
+keystore.properties
+release.jks
+
+# Exports the app produces, in case anyone runs one into the project directory.
+*.jrnlx

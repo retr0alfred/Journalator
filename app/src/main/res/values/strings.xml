@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="app_name">Journalator</string>
+
+    <!-- ============================ Generic ============================ -->
+    <string name="action_continue">Continue</string>
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_close">Close</string>
+    <string name="cd_close">Close this screen</string>
+    <string name="cd_app_mark">Journalator stencil mark</string>
+
+    <!-- ============================ Setup ============================ -->
+    <string name="setup_step_of">Step %1$d of %2$d</string>
+    <string name="setup_choose_title">Choose a passcode</string>
+    <string name="setup_choose_body">This passcode unlocks your past entries. There is no reset and no recovery. If you forget it, everything written is gone.</string>
+    <string name="setup_mode_pin">Numeric PIN</string>
+    <string name="setup_mode_passphrase">Passphrase</string>
+    <string name="setup_pin_hint">At least 6 digits</string>
+    <string name="setup_passphrase_hint">At least 8 characters</string>
+    <string name="setup_field_passcode">Passcode</string>
+    <string name="setup_field_confirm">Repeat the passcode</string>
+    <string name="setup_confirm_title">Repeat it</string>
+    <string name="setup_confirm_body">Type the same passcode again. This is the only check you will get.</string>
+    <string name="setup_mismatch">The two passcodes are not the same. Retype the second one.</string>
+    <string name="setup_ack">I understand that a forgotten passcode means my entries can never be read again.</string>
+    <string name="setup_generating_title">Cutting your keys</string>
+    <string name="setup_generating_body">Generating a key pair and stretching your passcode. This happens once and takes a few seconds.</string>
+    <string name="setup_done_title">Ready</string>
+    <string name="setup_done_body">Your keys are on this device and nowhere else. Start writing.</string>
+    <string name="setup_start_writing">Start writing</string>
+    <string name="setup_error">Setup could not finish: %1$s. Nothing was saved. Tap Try again.</string>
+    <string name="setup_strength_short_pin">Too short. Use at least 6 digits.</string>
+    <string name="setup_strength_short_phrase">Too short. Use at least 8 characters.</string>
+    <string name="setup_strength_repeated">This is a repeating or sequential pattern. Choose something less predictable.</string>
+    <string name="setup_strength_ok">Good. Roughly %1$s of guessing to break offline.</string>
+    <string name="setup_strength_weak">Weak. Add length — length helps far more than symbols.</string>
+    <string name="cd_setup_progress">Setup progress: step %1$d of %2$d</string>
+
+    <!-- ============================ Write ============================ -->
+    <string name="write_day_counter">DAY %1$s</string>
+    <string name="write_hint">Today. Nobody else reads this.</string>
+    <string name="write_seal">SEAL ENTRY</string>
+    <string name="write_sealed_stamp">SEALED</string>
+    <string name="write_sealed_body">Today is sealed. Open the archive with your passcode to read it.</string>
+    <string name="write_open_archive">ARCHIVE</string>
+    <string name="write_settings">SETTINGS</string>
+    <string name="cd_write_field">Today\'s entry. Your text is saved as you type.</string>
+    <string name="cd_seal_button">Seal today\'s entry. This makes it read-only and passcode-protected.</string>
+    <string name="cd_open_archive">Open the archive. Requires your passcode.</string>
+    <string name="cd_open_settings">Open settings</string>
+    <string name="write_seal_confirm_title">Seal today?</string>
+    <string name="write_seal_confirm_body">Sealing locks today\'s entry now instead of at midnight. After this you cannot edit it, and reading it needs your passcode.</string>
+    <string name="write_seal_confirm_action">Seal it</string>
+    <string name="write_saving">Saving…</string>
+    <string name="write_saved">Saved</string>
+    <string name="write_save_failed">Could not save your draft: %1$s. Your text is still on screen — copy it somewhere safe before closing the app.</string>
+    <plurals name="word_count">
+        <item quantity="one">%1$d word</item>
+        <item quantity="other">%1$d words</item>
+    </plurals>
+    <string name="mood_label">Mood (optional)</string>
+    <string name="mood_1">Flat</string>
+    <string name="mood_2">Low</string>
+    <string name="mood_3">Level</string>
+    <string name="mood_4">Lit</string>
+    <string name="mood_5">Loud</string>
+    <string name="cd_mood_option">Mood: %1$s</string>
+    <string name="cd_mood_selected">Mood %1$s, selected</string>
+
+    <!-- ============================ Unlock ============================ -->
+    <string name="unlock_title">ARCHIVE LOCKED</string>
+    <string name="unlock_body">Enter your passcode to read past entries.</string>
+    <string name="unlock_field">Passcode</string>
+    <string name="unlock_action">UNLOCK</string>
+    <string name="unlock_wrong">Wrong passcode.</string>
+    <plurals name="unlock_attempts_before_delay">
+        <item quantity="one">%1$d attempt left before a wait is enforced.</item>
+        <item quantity="other">%1$d attempts left before a wait is enforced.</item>
+    </plurals>
+    <string name="unlock_locked_out">Too many wrong attempts. Locked for %1$s.</string>
+    <string name="unlock_use_biometric">Use biometrics</string>
+    <string name="unlock_biometric_title">Unlock the archive</string>
+    <string name="unlock_biometric_subtitle">Confirm it is you to decrypt your entries.</string>
+    <string name="unlock_biometric_negative">Use passcode</string>
+    <string name="unlock_biometric_failed">Biometric unlock did not work: %1$s. Use your passcode instead.</string>
+    <string name="unlock_wiped">All entries were erased after too many wrong attempts, as you configured.</string>
+    <string name="cd_keypad_digit">Digit %1$s</string>
+    <string name="cd_keypad_delete">Delete last digit</string>
+    <string name="cd_keypad_clear">Clear the whole passcode</string>
+    <plurals name="cd_passcode_filled">
+        <item quantity="one">%1$d of %2$d digit entered</item>
+        <item quantity="other">%1$d of %2$d digits entered</item>
+    </plurals>
+    <string name="unlock_switch_to_passphrase">Type a passphrase</string>
+    <string name="unlock_switch_to_pin">Use the keypad</string>
+
+    <!-- ============================ Archive ============================ -->
+    <string name="archive_title">ARCHIVE</string>
+    <string name="archive_tab_list">Entries</string>
+    <string name="archive_tab_calendar">Calendar</string>
+    <string name="archive_empty">Nothing sealed yet. Write today, and it lands here tomorrow.</string>
+    <string name="archive_search_hint">Search sealed entries</string>
+    <string name="archive_search_none">No entry contains “%1$s”.</string>
+    <string name="archive_search_scope">Search runs in memory while unlocked. Nothing is indexed to disk.</string>
+    <string name="archive_lock_now">LOCK</string>
+    <string name="cd_archive_lock">Lock the archive and return to today</string>
+    <string name="cd_archive_entry">Entry for %1$s, %2$s. Opens read-only.</string>
+    <string name="cd_calendar_day_written">%1$s: written</string>
+    <string name="cd_calendar_day_blank">%1$s: nothing written</string>
+    <string name="cd_calendar_prev">Previous year</string>
+    <string name="cd_calendar_next">Next year</string>
+    <string name="archive_year">%1$d</string>
+    <string name="archive_entry_immutable">Sealed entries cannot be edited.</string>
+    <string name="archive_decrypt_failed">This entry could not be decrypted: %1$s. The file may be damaged. Restore from a .jrnlx backup.</string>
+
+    <!-- ============================ Settings ============================ -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_section_security">Security</string>
+    <string name="settings_section_reading">Reading and writing</string>
+    <string name="settings_section_data">Your data</string>
+    <string name="settings_section_about">About</string>
+
+    <string name="settings_change_passcode">Change passcode</string>
+    <string name="settings_change_passcode_body">Re-wraps your private key. Entries themselves are untouched, so this is instant no matter how much you have written.</string>
+    <string name="settings_change_current">Current passcode</string>
+    <string name="settings_change_new">New passcode</string>
+    <string name="settings_change_confirm">Repeat the new passcode</string>
+    <string name="settings_change_done">Passcode changed.</string>
+    <string name="settings_change_wrong">That is not your current passcode.</string>
+
+    <string name="settings_autolock">Lock when I leave the app</string>
+    <string name="settings_autolock_0">Immediately</string>
+    <string name="settings_autolock_30">After 30 seconds</string>
+    <string name="settings_autolock_120">After 2 minutes</string>
+
+    <string name="settings_biometric">Unlock with biometrics</string>
+    <string name="settings_biometric_body">Stores a second copy of your key, protected by the device biometric hardware. Your passcode keeps working and stays the way back in.</string>
+    <string name="settings_biometric_unavailable">No usable biometrics are enrolled on this device.</string>
+    <string name="settings_biometric_enroll_failed">Biometrics could not be enabled: %1$s. Nothing changed.</string>
+
+    <string name="settings_wipe_on_failure">Erase everything after repeated wrong passcodes</string>
+    <plurals name="settings_wipe_on_failure_body">
+        <item quantity="one">Off by default. When on, %1$d wrong passcode erases every entry on this device. There is no undo and no backup unless you exported one.</item>
+        <item quantity="other">Off by default. When on, %1$d consecutive wrong passcodes erase every entry on this device. There is no undo and no backup unless you exported one.</item>
+    </plurals>
+    <string name="settings_wipe_confirm_title">Type ERASE to turn this on</string>
+    <plurals name="settings_wipe_confirm_body">
+        <item quantity="one">This will permanently destroy every sealed entry after %1$d wrong passcode. Nothing can bring them back.</item>
+        <item quantity="other">This will permanently destroy every sealed entry after %1$d wrong passcodes. Nothing can bring them back.</item>
+    </plurals>
+    <string name="settings_wipe_confirm_word">ERASE</string>
+    <string name="settings_wipe_confirm_field">Type ERASE</string>
+
+    <string name="settings_reduce_motion">Reduce motion</string>
+    <string name="settings_reduce_motion_body">Replaces every animation with an instant change.</string>
+    <string name="settings_font_size">Text size</string>
+    <string name="settings_font_small">Small</string>
+    <string name="settings_font_medium">Medium</string>
+    <string name="settings_font_large">Large</string>
+    <string name="settings_heatmap">Show how much you wrote each day</string>
+    <string name="settings_heatmap_body">This stores word counts unencrypted so the calendar can shade each day. Leave it off and the calendar only shows written or not written.</string>
+    <string name="settings_immutable_note">Entries are sealed to keep the record honest. There is no edit button, on purpose.</string>
+
+    <string name="settings_export_encrypted">Export encrypted backup (.jrnlx)</string>
+    <string name="settings_export_encrypted_body">One file, encrypted with a passphrase you choose. This is your only backup route — there is no cloud.</string>
+    <string name="settings_export_plain">Export readable text</string>
+    <string name="settings_export_plain_body">Plain text. Anything on this phone can read it.</string>
+    <string name="settings_export_plain_warning_title">This file will not be protected</string>
+    <string name="settings_export_plain_warning_body">The exported file is ordinary text. Any app with storage access, anyone who picks up your phone, and any cloud backup of your Downloads folder can read every word. Continue?</string>
+    <string name="settings_export_plain_warning_action">I understand, export it</string>
+    <string name="settings_import">Import a .jrnlx backup</string>
+    <string name="settings_import_body">Asks before replacing anything. Entries are never merged silently.</string>
+    <string name="settings_export_passphrase">Backup passphrase</string>
+    <string name="settings_export_passphrase_body">Defaults to your app passcode. Change it here if you want the backup to open with something else.</string>
+    <string name="settings_backup_needs_unlock">Unlock the archive first. Backups are made from decrypted entries, so this needs your passcode.</string>
+    <string name="settings_export_ok">Exported %1$s.</string>
+    <string name="settings_export_failed">Export failed: %1$s. No file was written.</string>
+    <string name="settings_import_conflict_title">Replace existing entries?</string>
+    <plurals name="settings_import_conflict_body">
+        <item quantity="one">This backup contains %1$d entry, and %2$d of the days in it collide with days you already have. Choose what happens to those days.</item>
+        <item quantity="other">This backup contains %1$d entries, and %2$d of the days in it collide with days you already have. Choose what happens to those days.</item>
+    </plurals>
+    <string name="settings_import_keep_mine">Keep what is on this device</string>
+    <string name="settings_import_take_backup">Take the backup\'s version</string>
+    <plurals name="settings_import_ok">
+        <item quantity="one">Imported %1$d entry.</item>
+        <item quantity="other">Imported %1$d entries.</item>
+    </plurals>
+    <string name="settings_import_failed">Import failed: %1$s. Nothing on this device changed.</string>
+    <string name="settings_import_bad_file">That file is not a Journalator backup, or it is damaged.</string>
+    <string name="settings_import_bad_passphrase">That passphrase does not open this backup.</string>
+
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_licences">Open-source licences</string>
+    <string name="licences_body">Journalator is MIT licensed.\n\nBundled type:\n• Chakra Petch — SIL Open Font License 1.1\n• Space Mono — SIL Open Font License 1.1\nBoth licence texts are committed in the licenses/ folder of the source repository.\n\nBuild-time libraries, all Apache License 2.0:\n• AndroidX Core, AppCompat, Activity, Lifecycle\n• Jetpack Compose (UI, Foundation, Material 3)\n• Room\n• AndroidX Biometric\n• AndroidX Profile Installer\n• Kotlin standard library and coroutines (JetBrains)\n\nNo advertising, analytics, crash-reporting or networking library is present, and the app holds no internet permission.</string>
+    <string name="settings_security_summary_title">How your entries are protected</string>
+    <string name="settings_security_summary">Today\'s draft is encrypted with a key held by this phone\'s security hardware, so you can keep writing without a passcode. When a day is sealed, it is locked with a fresh random key, and that key is locked with a public key. Opening it again needs the matching private key, and that private key is locked with your passcode. Writing never needs the passcode. Reading always does. The app has no internet permission at all, so nothing can leave the device even by accident.</string>
+    <string name="settings_nonstandard_note">No cloud, no account, no analytics. Your backup strategy is the .jrnlx file, and nothing else.</string>
+
+    <!-- ============================ Errors ============================ -->
+    <string name="error_no_storage_app">No app on this phone can save files. Install a files app, then try the export again.</string>
+    <string name="error_generic">Something went wrong: %1$s</string>
+    <string name="duration_seconds">%1$d s</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="duration_minutes_seconds">%1$d min %2$d s</string>
+    <string name="strength_centuries">centuries</string>
+    <string name="strength_years">years</string>
+    <string name="strength_months">months</string>
+    <string name="strength_days">days</string>
+    <string name="strength_hours">hours</string>
+    <string name="strength_minutes">minutes</string>
+</resources>
