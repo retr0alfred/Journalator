@@ -191,6 +191,38 @@ jobs:
           ls -la "$out"
           cat "${out}.sha256"
 
+      # AGP already zipaligns and applies v1+v2+v3 signing as part of `assembleRelease`
+      # once the signingConfig in app/build.gradle.kts finds all four KEYSTORE_* secrets —
+      # there is no separate unsigned artifact to hand to apksigner here. What this step
+      # checks is that it actually happened: if a secret were missing, renamed, or wrong,
+      # Gradle would quietly fall back to an unsigned build (deliberately, so a bare clone
+      # without secrets still builds) and this job would otherwise publish that unsigned
+      # APK as the public release with nobody able to install it.
+      - name: Verify the release signature
+        id: verify
+        run: |
+          set -euo pipefail
+          apksigner="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort | tail -n 1)"
+          "$apksigner" verify --print-certs --verbose "${{ steps.artifact.outputs.path }}" | tee signature.txt
+
+          if grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' signature.txt \
+              && grep -q 'Verified using v3 scheme (APK Signature Scheme v3): true' signature.txt; then
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+            echo "APK is v2/v3 signed."
+          else
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::APK is not v2/v3 signed (KEYSTORE_BASE64 and friends are probably unset)."
+          fi
+
+      # Only a tag push publishes a public release, so only a tag push needs to fail here.
+      # An ordinary push or PR without secrets is expected to be unsigned and must still
+      # build cleanly.
+      - name: Refuse to publish an unsigned tagged release
+        if: startsWith(github.ref, 'refs/tags/v') && steps.verify.outputs.signed != 'true'
+        run: |
+          echo "::error::Tag ${{ github.ref_name }} would publish an unsigned APK. Check the KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS and KEY_PASSWORD repository secrets."
+          exit 1
+
       # A release that quietly grew past 10 MB is a regression, so fail rather than publish.
       - name: Enforce the APK size budget
         run: |
@@ -236,4 +268,5 @@ jobs:
             ```
 
             The security model is described in `docs/SECURITY.md`. This APK requests no
-            internet permission.
+            internet permission, and CI confirmed it carries a valid v2/v3 signature before
+            this release was published.
