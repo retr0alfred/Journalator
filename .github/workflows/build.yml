@@ -203,7 +203,15 @@ jobs:
         run: |
           set -euo pipefail
           apksigner="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort | tail -n 1)"
-          "$apksigner" verify --print-certs --verbose "${{ steps.artifact.outputs.path }}" | tee signature.txt
+
+          # apksigner exits non-zero for an unsigned APK, which is the expected shape of
+          # this job whenever the KEYSTORE_* secrets are absent (a bare clone / a main
+          # push without secrets). That must not abort the script under `set -e` — this
+          # step only classifies the artifact; "Refuse to publish an unsigned tagged
+          # release" below is the one that actually fails the build, and only on a tag.
+          "$apksigner" verify --print-certs --verbose "${{ steps.artifact.outputs.path }}" \
+            > signature.txt 2>&1 || true
+          cat signature.txt
 
           if grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' signature.txt \
               && grep -q 'Verified using v3 scheme (APK Signature Scheme v3): true' signature.txt; then
